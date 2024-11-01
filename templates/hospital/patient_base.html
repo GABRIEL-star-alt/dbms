@@ -300,8 +300,13 @@
         <div class="collapse navbar-collapse justify-content-between" id="navbarCollapse">
           <div class="navbar-nav" style=" margin-left: 90%;">
 
-            <a href="/logout" class="nav-item nav-link">Logout</a>
-          </div>
+            <form method="POST" action="{% url 'logout' %}" style="display: inline;">
+              {% csrf_token %}
+              <button type="submit" class="nav-item nav-link" style="background: none; border: none; color: inherit; cursor: pointer;">
+                  Logout
+              </button>
+          </form>
+                    </div>
         </div>
       </nav>
     </div>

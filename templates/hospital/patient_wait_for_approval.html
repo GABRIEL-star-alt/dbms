@@ -36,8 +36,12 @@
     <hr class="my-4">
     <p>Check Later</p>
     <p class="lead">
-      <a class="btn btn-primary btn-lg" href="/logout" role="button">Logout For Now</a>
-    </p>
+      <form method="POST" action="{% url 'logout' %}" style="display: inline;">
+        {% csrf_token %}
+        <button type="submit" class="nav-item nav-link" style="background: none; border: none; color: inherit; cursor: pointer;">
+            Logout
+        </button>
+    </form>    </p>
   </div>
 
   {% include "hospital/footer.html" %}
