@@ -11,7 +11,6 @@ media
 *.bak
 
 
-hospital\hmsauth-f4968-firebase-adminsdk-oywhh-8bd3ce2d59.json
 # If you are using PyCharm #
 .idea/**/workspace.xml
 .idea/**/tasks.xml
