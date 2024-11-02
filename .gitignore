@@ -7,9 +7,9 @@ db.sqlite3
 media
 
 # Backup files #
+*.json
 *.bak
-hospitalmanagement\hmsdb-cb10f-firebase-adminsdk-5qs4l-bcb05a7cf9.json
-hospital\hmsdb-cb10f-firebase-adminsdk-5qs4l-bcb05a7cf9.json
+
 
 hospital\hmsauth-f4968-firebase-adminsdk-oywhh-8bd3ce2d59.json
 # If you are using PyCharm #
