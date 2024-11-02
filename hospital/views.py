@@ -8,8 +8,30 @@ from django.contrib.auth.decorators import login_required,user_passes_test
 from datetime import datetime,timedelta,date
 from django.conf import settings
 from django.db.models import Q
+from django.core.files.storage import FileSystemStorage
+from firebase_admin import firestore, credentials
+import firebase_admin
+import os
+from google.cloud.firestore import CollectionReference
+from google.cloud.firestore_v1.base_query import FieldFilter, BaseCompositeFilter
+from google.cloud import firestore
+import urllib.parse
+
+from google.cloud import storage
 
 # Create your views here.
+
+def initialize_firebase():
+    # Set the path to your service account key JSON file
+    BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    cred = credentials.Certificate(os.path.join(BASE_DIR, 'hospital', 'hmsdb-cb10f-firebase-adminsdk-5qs4l-bcb05a7cf9.json'))
+
+    # Initialize the app with a service account, granting admin privileges
+    firebase_admin.initialize_app(cred)
+
+# Call the Firebase initialization function
+initialize_firebase()
+
 def home_view(request):
     if request.user.is_authenticated:
         return HttpResponseRedirect('afterlogin')
@@ -284,6 +306,52 @@ def admin_view_doctor_specialisation_view(request):
 @user_passes_test(is_admin)
 def admin_patient_view(request):
     return render(request,'hospital/admin_patient.html')
+
+@login_required(login_url='adminlogin')
+@user_passes_test(is_admin)
+
+
+@login_required(login_url='adminlogin')
+@user_passes_test(is_admin)
+def upload_patient_reports(request):
+    # Set the environment variable for Google credentials
+    os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = r"C:\Users\Windows10pro\Desktop\attempt\hospitalmanagement\hmsdb-cb10f-806c3d2729c0.json"
+
+    # Initialize Firestore client
+    db = firestore.Client()
+
+    if request.method == 'POST':
+        doctor_name = request.POST.get('doctor_name')
+        patient_name = request.POST.get('patient_name')
+        report_file = request.FILES.get('report_folder')
+        print(doctor_name, patient_name, report_file)
+
+        if report_file:
+            # Save report to a storage bucket
+            fs = FileSystemStorage()
+            filename = fs.save(report_file.name, report_file)
+            uploaded_file_url = fs.url(filename)
+
+            # Save to Firestore
+            db.collection('patients').add({
+                'doctor_name': doctor_name,
+                'patient_name': patient_name,
+                'report_url': uploaded_file_url
+            })
+
+            return render(request, 'hospital/report-uploads.html', {
+                'uploaded_file_url': uploaded_file_url,
+                'message': 'File uploaded successfully!'
+            })
+
+        return render(request, 'hospital/report-uploads.html', {
+            'message': 'Please upload a valid file.'
+        })
+
+    return render(request, 'hospital/report-uploads.html')
+
+    # Render the form for GET requests
+
 
 
 
@@ -620,6 +688,10 @@ def search_view(request):
 
 
 
+
+
+
+
 @login_required(login_url='doctorlogin')
 @user_passes_test(is_doctor)
 def doctor_view_discharge_patient_view(request):
@@ -709,6 +781,51 @@ def patient_dashboard_view(request):
     }
     return render(request,'hospital/patient_dashboard.html',context=mydict)
 
+@login_required(login_url='patientlogin')
+@user_passes_test(is_patient)
+def view_patient_report(request):
+    # Set the environment variable to your JSON file path
+    os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = r"C:\Users\Windows10pro\Desktop\attempt\hospitalmanagement\hmsdb-cb10f-806c3d2729c0.json"
+
+    if request.user.is_authenticated:
+        patient_uname = request.user.username  # Get the username
+
+        # Initialize Firestore client
+        db = firestore.Client()
+
+        # Initialize Storage client
+        storage_client = storage.Client()
+
+        # Derive the bucket name from your project_id
+        project_id = "hmsdb-cb10f"  # Extract this from your JSON file
+        bucket_name = f"{project_id}.appspot.com"
+        bucket = storage_client.bucket(bucket_name)
+
+        # Query the Firestore database for the patient's reports
+        patient_reports = db.collection('patients').where(filter=FieldFilter('patient_name', '==', patient_uname)).get()
+
+        reports = []
+        for doc in patient_reports:
+            report_data = doc.to_dict()
+
+            # Assuming the report URL is stored in 'report_url'
+            if 'report_url' in report_data:
+                # Construct the image URL
+                file_name = report_data['report_url'].split('/')[-1]  # Extract the filename
+                encoded_file_name = urllib.parse.quote(file_name)  # Encode the filename for URL
+                image_url = f"https://firebasestorage.googleapis.com/v0/b/{bucket_name}/o/{encoded_file_name}?alt=media"
+                
+                # Add the constructed URL back to the report data
+                report_data['image_url'] = image_url
+            
+            reports.append(report_data)
+
+        context = {
+            'reports': reports,  # Pass the reports to the template
+        }
+        return render(request, 'hospital/view_patient_report.html', context)  # Adjust template name as needed
+    else:
+        return redirect('login')  # Redirect to your login view
 
 
 @login_required(login_url='patientlogin')

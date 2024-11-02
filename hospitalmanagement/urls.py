@@ -33,6 +33,8 @@ urlpatterns = [
     path('adminsignup', views.admin_signup_view),
     path('doctorsignup', views.doctor_signup_view,name='doctorsignup'),
     path('patientsignup', views.patient_signup_view),
+
+    
     
     path('adminlogin', LoginView.as_view(template_name='hospital/adminlogin.html')),
     path('doctorlogin', LoginView.as_view(template_name='hospital/doctorlogin.html')),
@@ -57,6 +59,11 @@ urlpatterns = [
 
 
     path('admin-patient', views.admin_patient_view,name='admin-patient'),
+    # path('upload-reports', views.upload_reports,name='upload-reports'),
+    path('upload-reports/', views.upload_patient_reports, name='upload_reports'),
+    path('patient-view-report/', views.view_patient_report, name='patient-view-report'),
+
+
     path('admin-view-patient', views.admin_view_patient_view,name='admin-view-patient'),
     path('delete-patient-from-hospital/<int:pk>', views.delete_patient_from_hospital_view,name='delete-patient-from-hospital'),
     path('update-patient/<int:pk>', views.update_patient_view,name='update-patient'),
