@@ -315,7 +315,6 @@ def admin_patient_view(request):
 @user_passes_test(is_admin)
 def upload_patient_reports(request):
     # Set the environment variable for Google credentials
-    os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = r"C:\Users\Windows10pro\Desktop\attempt\hospitalmanagement\hmsdb-cb10f-806c3d2729c0.json"
 
     # Initialize Firestore client
     db = firestore.Client()
@@ -785,7 +784,6 @@ def patient_dashboard_view(request):
 @user_passes_test(is_patient)
 def view_patient_report(request):
     # Set the environment variable to your JSON file path
-    os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = r"C:\Users\Windows10pro\Desktop\attempt\hospitalmanagement\hmsdb-cb10f-806c3d2729c0.json"
 
     if request.user.is_authenticated:
         patient_uname = request.user.username  # Get the username
