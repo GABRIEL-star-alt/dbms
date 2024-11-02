@@ -24,7 +24,7 @@ from google.cloud import storage
 def initialize_firebase():
     # Set the path to your service account key JSON file
     BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-    cred = credentials.Certificate(os.path.join(BASE_DIR, 'hospital', 'hmsdb-cb10f-firebase-adminsdk-5qs4l-bcb05a7cf9.json'))
+    cred = credentials.Certificate(os.path.join(BASE_DIR, 'hospital', '###'))
 
     # Initialize the app with a service account, granting admin privileges
     firebase_admin.initialize_app(cred)
@@ -315,6 +315,7 @@ def admin_patient_view(request):
 @user_passes_test(is_admin)
 def upload_patient_reports(request):
     # Set the environment variable for Google credentials
+    os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = r"C:\Users\Windows10pro\Desktop\attempt\hospitalmanagement\###"
 
     # Initialize Firestore client
     db = firestore.Client()
@@ -784,6 +785,7 @@ def patient_dashboard_view(request):
 @user_passes_test(is_patient)
 def view_patient_report(request):
     # Set the environment variable to your JSON file path
+    os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = r"C:\Users\Windows10pro\Desktop\attempt\hospitalmanagement\##"
 
     if request.user.is_authenticated:
         patient_uname = request.user.username  # Get the username
