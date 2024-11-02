@@ -1,0 +1,55 @@
+{% extends 'hospital/admin_base.html' %}
+{% load static %}
+{% block content %}
+<br><br>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+  <link href="http://netdna.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css">
+
+  <style type="text/css">
+    a:link { text-decoration: none; }
+    .menu { top: 50px; }
+    h6 { color: white; }
+    .order-card { color: #fff; }
+    .bg-c-blue { background: linear-gradient(45deg, #4099ff, #73b4ff); }
+    .card { border-radius: 5px; box-shadow: 0 1px 2.94px 0.06px rgba(4, 26, 55, 0.16); border: none; margin-bottom: 30px; transition: all 0.3s ease-in-out; }
+    .card .card-block { padding: 25px; }
+  </style>
+
+</head>
+
+<div class="container">
+  <div class="row">
+    <div class="col-md-6 offset-md-3">
+      <div class="card bg-c-blue order-card">
+        <div class="card-block">
+          <h6 class="m-b-20 text-center">Upload Patient Report</h6>
+          <form method="post" enctype="multipart/form-data" action="{% url 'upload_reports' %}">
+            {% csrf_token %}
+            <div class="form-group">
+              <label for="doctor_name" class="text-white">Doctor Name</label>
+              <input type="text" class="form-control" id="doctor_name" name="doctor_name" required>
+            </div>
+            <div class="form-group">
+              <label for="patient_name" class="text-white">Patient Name</label>
+              <input type="text" class="form-control" id="patient_name" name="patient_name" required>
+            </div>
+            <div class="form-group">
+              <label for="report_folder" class="text-white">Upload Patient Report (Images)</label>
+              <input type="file" class="form-control" id="report_folder" name="report_folder" multiple required>
+            </div>
+            <button type="submit" class="btn btn-light btn-block">Submit</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<br><br><br><br><br><br><br>
+
+{% endblock content %}
